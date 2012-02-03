@@ -11,15 +11,19 @@ describe Mongoid::Persistence::Operations::Insert do
   end
 
   let(:document) do
-    Patient.new(:title => "Mr")
+    Patient.new(title: "Mr")
   end
 
   let(:address) do
-    Address.new(:street => "Oxford St")
+    Address.new(street: "Oxford St")
   end
 
   let(:collection) do
-    stub.quacks_like(Mongoid::Collection.allocate)
+    stub.quacks_like(Moped::Collection.allocate)
+  end
+
+  let(:query) do
+    stub
   end
 
   before do
@@ -63,27 +67,25 @@ describe Mongoid::Persistence::Operations::Insert do
     end
 
     it "sets the options" do
-      insert.options.should eq({ :safe => Mongoid.persist_in_safe_mode })
+      insert.options.should be_empty
     end
   end
 
   describe "#persist" do
 
     def root_set_expectation
-      lambda {
+      ->{
         collection.expects(:insert).with(
-          document.raw_attributes,
-          :safe => false
+          document.raw_attributes
         ).returns("Object")
       }
     end
 
     def root_push_expectation
-      lambda {
-        collection.expects(:update).with(
-          { "_id" => document.id },
-          { "addresses" => { "$push" => address.raw_attributes } },
-          :safe => false
+      ->{
+        collection.expects(:find).with({ "_id" => document.id }).returns(query)
+        query.expects(:update).with(
+          { "addresses" => { "$push" => address.raw_attributes } }
         ).returns("Object")
       }
     end

@@ -9,8 +9,8 @@ describe "Rails::Mongoid" do
   describe ".create_indexes" do
     let(:pattern) { "spec/app/models/**/*.rb" }
     let(:logger) { stub }
-    let(:klass) { Person }
-    let(:model_paths) { [ "spec/app/models/person.rb" ] }
+    let(:klass) { User }
+    let(:model_paths) { [ "spec/app/models/user.rb" ] }
     let(:indexes) { Rails::Mongoid.create_indexes(pattern) }
 
     before do
@@ -39,8 +39,8 @@ describe "Rails::Mongoid" do
     context "when an exception is raised" do
       it "is not swallowed" do
         Rails::Mongoid.expects(:determine_model).returns(klass)
-        klass.expects(:create_indexes).raises(Mongo::MongoArgumentError)
-        expect { indexes }.to raise_error(Mongo::MongoArgumentError)
+        klass.expects(:create_indexes).raises(ArgumentError)
+        expect { indexes }.to raise_error(ArgumentError)
       end
     end
 
@@ -49,7 +49,7 @@ describe "Rails::Mongoid" do
       let(:model_paths) { [ "spec/app/models/address.rb" ] }
 
       before do
-        klass.index_options = { :city => {} }
+        klass.index_options = { city: {} }
       end
 
       it "does nothing, but logging" do
@@ -162,11 +162,11 @@ describe "Rails::Mongoid" do
   describe ".preload_models" do
 
     let(:app) do
-      stub(:config => config)
+      stub(config: config)
     end
 
     let(:config) do
-      stub(:paths => paths)
+      stub(paths: paths)
     end
 
     let(:paths) do
@@ -240,11 +240,11 @@ describe "Rails::Mongoid" do
   describe ".load_models" do
 
     let(:app) do
-      stub(:config => config)
+      stub(config: config)
     end
 
     let(:config) do
-      stub(:paths => paths)
+      stub(paths: paths)
     end
 
     let(:paths) do
