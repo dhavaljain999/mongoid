@@ -62,7 +62,7 @@ RSpec.configure do |config|
   # drop the database after the suite.
   config.after(:suite) do
     if ENV["CI"]
-      Threaded.sessions[:default].drop
+      Mongoid::Threaded.sessions[:default].drop
     end
   end
 
