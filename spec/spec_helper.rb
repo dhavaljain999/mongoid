@@ -62,7 +62,7 @@ RSpec.configure do |config|
   # drop the database after the suite.
   config.after(:suite) do
     if ENV["CI"]
-      Mongoid.master.connection.drop_database(database_id)
+      Threaded.sessions[:default].drop
     end
   end
 
